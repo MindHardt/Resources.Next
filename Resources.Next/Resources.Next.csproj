@@ -8,6 +8,9 @@
         <Title>MindHardt.Resources.Next</Title>
         <Authors>MindHardt</Authors>
         <Description>An alternative to .resx resources, allowing for more flexible and readable localized resources</Description>
+        <PackageProjectUrl>https://github.com/MindHardt/Resources.Next</PackageProjectUrl>
+        <PackageIcon>icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/MindHardt/Resources.Next</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +20,11 @@
     <ItemGroup>
       <None Remove="SampleResources.txt" />
       <AdditionalFiles Include="SampleResources.csv" />
+      <None Include="..\icon.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+        <Link>icon.png</Link>
+      </None>
     </ItemGroup>
 
 </Project>
