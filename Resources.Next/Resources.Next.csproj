@@ -18,12 +18,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="SampleResources.txt" />
       <AdditionalFiles Include="SampleResources.csv" />
-      <None Include="..\icon.png">
+      <Content Include="..\icon.png">
         <Pack>True</Pack>
         <Link>icon.png</Link>
-      </None>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
