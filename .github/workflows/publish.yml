@@ -17,3 +17,4 @@ jobs:
           PROJECT_FILE_PATH: Resources.Next/Resources.Next.csproj
           INCLUDE_SYMBOLS: true
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          PACKAGE_NAME: MindHardt.Resources.Next
