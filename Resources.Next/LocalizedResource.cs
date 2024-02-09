@@ -25,7 +25,7 @@ public class LocalizedResource(IReadOnlyDictionary<string, string> localizations
     /// </summary>
     public string GetRequired(string culture) => _localizations[culture];
     /// <inheritdoc cref="GetRequired(string)"/>
-    public string GetRequired(CultureInfo? culture) =>
+    public string GetRequired(CultureInfo? culture = null) =>
         GetRequired((culture ?? CultureInfo.CurrentCulture).TwoLetterISOLanguageName);
 
     /// <summary>
@@ -34,7 +34,7 @@ public class LocalizedResource(IReadOnlyDictionary<string, string> localizations
     /// </summary>
     public string? GetOrNull(string culture) => _localizations.GetValueOrDefault(culture);
     /// <inheritdoc cref="GetOrNull(string)"/>
-    public string? GetOrNull(CultureInfo? culture) =>
+    public string? GetOrNull(CultureInfo? culture = null) =>
         GetOrNull((culture ?? CultureInfo.CurrentCulture).TwoLetterISOLanguageName);
 
     /// <summary>
@@ -43,7 +43,7 @@ public class LocalizedResource(IReadOnlyDictionary<string, string> localizations
     /// </summary>
     public string GetOrDefault(string culture) => _localizations.GetValueOrDefault(culture) ?? Default;
     /// <inheritdoc cref="GetOrDefault(string)"/>
-    public string GetOrDefault(CultureInfo? culture) =>
+    public string GetOrDefault(CultureInfo? culture = null) =>
         GetOrDefault((culture ?? CultureInfo.CurrentCulture).TwoLetterISOLanguageName);
 
     /// <summary>
