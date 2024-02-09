@@ -22,11 +22,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="SampleResources.csv" />
+        <AdditionalFiles Include="SampleResources.csv" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="..\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
+        <None Include="..\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
         <None Include="..\README.md" Pack="true" PackagePath="\" Link="README.md" />
     </ItemGroup>
 
