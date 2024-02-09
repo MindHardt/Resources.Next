@@ -3,18 +3,27 @@ on:
   push:
     branches:
       - master
+
 jobs:
-  publish:
-    name: build, pack & publish
+  nuget-publish:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      
-      - name: publish on version change
-        id: publish_nuget
-        uses: brandedoutcast/publish-nuget@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
         with:
-          PROJECT_FILE_PATH: Resources.Next/Resources.Next.csproj
-          INCLUDE_SYMBOLS: true
-          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-          PACKAGE_NAME: MindHardt.Resources.Next
+          source-url: https://api.nuget.org/v3/index.json
+          dotnet-version: 8
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_TOKEN}}
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Publish
+        run: |
+          mkdir __out
+          dotnet pack -c Release -o __out --no-restore
+          dotnet nuget push "./__out/*.nupkg" --skip-duplicate --no-symbols false --api-key ${{secrets.NUGET_TOKEN}}
+          rm -rf __out
