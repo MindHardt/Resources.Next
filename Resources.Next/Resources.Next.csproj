@@ -19,11 +19,15 @@
 
     <ItemGroup>
       <AdditionalFiles Include="SampleResources.csv" />
-      <Content Include="..\icon.png">
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\icon.png">
         <Pack>True</Pack>
+        <!--suppress CheckTagEmptyBody -->
+        <PackagePath></PackagePath>
         <Link>icon.png</Link>
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+      </None>
     </ItemGroup>
 
 </Project>
