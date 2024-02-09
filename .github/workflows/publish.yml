@@ -17,7 +17,7 @@ jobs:
           source-url: https://api.nuget.org/v3/index.json
           dotnet-version: 8.0.*
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.NUGET_TOKEN}}
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_API_KEY}}
       - name: Install dependencies
         run: dotnet restore
 
@@ -25,5 +25,5 @@ jobs:
         run: |
           mkdir __out
           dotnet pack -c Release -o __out --no-restore
-          dotnet nuget push "./__out/*.nupkg" --skip-duplicate --no-symbols false --api-key ${{secrets.NUGET_TOKEN}}
+          dotnet nuget push "./__out/*.nupkg" --skip-duplicate --no-symbols false --api-key ${{secrets.NUGET_API_KEY}}
           rm -rf __out
