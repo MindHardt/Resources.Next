@@ -3,6 +3,9 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
+    </PropertyGroup>
+    
+    <PropertyGroup>
         <Version>1.0.1</Version>
         <PackageId>MindHardt.Resources.Next</PackageId>
         <Title>MindHardt.Resources.Next</Title>
@@ -24,7 +27,7 @@
 
     <ItemGroup>
       <None Include="..\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
-      <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="..\README.md" Pack="true" PackagePath="\" Link="README.md" />
     </ItemGroup>
 
 </Project>
