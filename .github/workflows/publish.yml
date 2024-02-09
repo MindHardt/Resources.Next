@@ -11,19 +11,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup .NET Core
+        
+      - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           source-url: https://api.nuget.org/v3/index.json
           dotnet-version: 8.0.*
         env:
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_API_KEY}}
-      - name: Install dependencies
+          
+      - name: Restore dependencies
         run: dotnet restore
 
-      - name: Publish
+      - name: Publish to NuGet
         run: |
           mkdir __out
           dotnet pack -c Release -o __out --no-restore
-          dotnet nuget push "./__out/*.nupkg" --skip-duplicate --no-symbols false --api-key ${{secrets.NUGET_API_KEY}}
+          dotnet nuget push "./__out/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}}
           rm -rf __out
