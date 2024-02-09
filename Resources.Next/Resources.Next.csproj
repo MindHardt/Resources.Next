@@ -11,6 +11,7 @@
         <PackageProjectUrl>https://github.com/MindHardt/Resources.Next</PackageProjectUrl>
         <PackageIcon>icon.png</PackageIcon>
         <RepositoryUrl>https://github.com/MindHardt/Resources.Next</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,12 +23,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="..\icon.png">
-        <Pack>True</Pack>
-        <!--suppress CheckTagEmptyBody -->
-        <PackagePath></PackagePath>
-        <Link>icon.png</Link>
-      </None>
+      <None Include="..\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
+      <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
