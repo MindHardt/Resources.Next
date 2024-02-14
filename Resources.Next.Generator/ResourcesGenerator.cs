@@ -33,9 +33,7 @@ public class ResourcesGenerator : ISourceGenerator
                 /// </summary>
                 public class LocalizedResource(IEnumerable<KeyValuePair<string, string>> localizations)
                 {
-                    private readonly FrozenDictionary<string, string> _localizations = localizations.ContainsKey(string.Empty)
-                        ? localizations.ToFrozenDictionary()
-                        : throw new InvalidOperationException("No localization for default value found");
+                    private readonly FrozenDictionary<string, string> _localizations = localizations.ToFrozenDictionary();
                 
                     /// <summary>
                     /// A default fallback value of this <see cref="LocalizedResource"/>.

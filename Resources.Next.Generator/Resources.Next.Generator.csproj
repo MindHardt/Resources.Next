@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>1.1.0</Version>
+        <Version>1.1.1</Version>
         <PackageId>MindHardt.Resources.Next</PackageId>
         <Title>MindHardt.Resources.Next</Title>
         <Authors>MindHardt</Authors>
