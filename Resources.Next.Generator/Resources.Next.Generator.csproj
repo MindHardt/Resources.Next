@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <IsPackable>false</IsPackable>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
 
@@ -11,6 +10,18 @@
         <PackageId>Resources.Next.Generator</PackageId>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Version>1.1.0</Version>
+        <PackageId>MindHardt.Resources.Next</PackageId>
+        <Title>MindHardt.Resources.Next</Title>
+        <Authors>MindHardt</Authors>
+        <Description>An alternative to .resx resources, allowing for more flexible and readable localized resources</Description>
+        <PackageProjectUrl>https://github.com/MindHardt/Resources.Next</PackageProjectUrl>
+        <PackageIcon>icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/MindHardt/Resources.Next</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,9 +34,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        
-        <None Include="..\README.md" Pack="true" PackagePath="\" /> 
-        <None Include="..\..\icon.png" Pack="true" PackagePath="\" Visible="false" />
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="..\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
+        <None Include="..\README.md" Pack="true" PackagePath="\" Link="README.md" />
     </ItemGroup>
 
 </Project>

@@ -3,18 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
-    </PropertyGroup>
-    
-    <PropertyGroup>
-        <Version>1.0.5</Version>
-        <PackageId>MindHardt.Resources.Next</PackageId>
-        <Title>MindHardt.Resources.Next</Title>
-        <Authors>MindHardt</Authors>
-        <Description>An alternative to .resx resources, allowing for more flexible and readable localized resources</Description>
-        <PackageProjectUrl>https://github.com/MindHardt/Resources.Next</PackageProjectUrl>
-        <PackageIcon>icon.png</PackageIcon>
-        <RepositoryUrl>https://github.com/MindHardt/Resources.Next</RepositoryUrl>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,12 +12,6 @@
 
     <ItemGroup>
         <AdditionalFiles Include="SampleResources.csv" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-        <None Include="..\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
-        <None Include="..\README.md" Pack="true" PackagePath="\" Link="README.md" />
     </ItemGroup>
 
 </Project>
