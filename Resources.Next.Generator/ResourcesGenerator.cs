@@ -142,9 +142,14 @@ public class ResourcesGenerator : ISourceGenerator
    $$"""
      
      /// <summary>
+     /// Attempts to find resource with provided key in <see cref="Dictionary"/>.
+     /// </summary>
+     public static LocalizedResource? Find(string key) => Dictionary.GetValueOrDefault(key);
+     
+     /// <summary>
      /// A readonly dictionary for resources lookup.
      /// </summary>
-     public static FrozenDictionary<string, LocalizedResource> Dictionary { get; } = FrozenDictionary.ToFrozenDictionary
+     public static IReadOnlyDictionary<string, LocalizedResource> Dictionary { get; } = FrozenDictionary.ToFrozenDictionary
      ([
      {{string.Join("\n", resources.Select(x => $"\tKeyValuePair.Create(\"{x.Name}\", {x.Name}),"))}}
      ]);
