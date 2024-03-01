@@ -26,6 +26,6 @@ jobs:
       - name: Publish to NuGet
         run: |
           mkdir __out
-          dotnet pack -c Release -o __out --no-restore
+          dotnet pack Resources.Next.Core -c Release -o __out --no-restore
           dotnet nuget push "./__out/*.nupkg" --api-key ${{secrets.NUGET_API_KEY}}
           rm -rf __out
