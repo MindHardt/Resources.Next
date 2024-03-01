@@ -18,7 +18,7 @@ internal static class DictionaryLocalizedResource
         /// <remarks>
         /// This implementation is more heavy on memory but is easier to debug.
         /// </remarks>
-        public class DictionaryLocalizedResource(IEnumerable<KeyValuePair<string, string>> localizations) : LocalizedResource
+        internal class DictionaryLocalizedResource(IEnumerable<KeyValuePair<string, string>> localizations) : LocalizedResource
         {
             private readonly FrozenDictionary<string, string> _localizedResources = localizations.ToFrozenDictionary();
         

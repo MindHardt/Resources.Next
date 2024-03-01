@@ -2,7 +2,7 @@
 
 internal static class SourceConstants
 {
-    public const string Namespace = "Resources.Next";
+    public const string Namespace = "Resources.Next.Generated";
     public const string NamespaceDirective = $"namespace {Namespace};";
 
     public const string FileHeader =

@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Resources.Next.Generator.Generators;
 using Resources.Next.Generator.Source;
+using Resources.Next.Shared;
 
 // ReSharper disable PossibleMultipleEnumeration
 // ReSharper disable UseRawString
@@ -14,166 +18,118 @@ using Resources.Next.Generator.Source;
 namespace Resources.Next.Generator;
 
 [Generator]
-public class ResourcesGenerator : ISourceGenerator
+public class ResourcesGenerator : IIncrementalGenerator
 {
-    public void Initialize(GeneratorInitializationContext context) => context.RegisterForPostInitialization(ctx =>
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        ctx.AddSource($"{nameof(IResourceProvider)}.g.cs", SourceText.From(IResourceProvider.Source, Encoding.UTF8));
-        ctx.AddSource($"{nameof(LocalizedResource)}.g.cs", SourceText.From(LocalizedResource.Source, Encoding.UTF8));
-        ctx.AddSource($"{nameof(ResourcesGenerationKind)}.g.cs", SourceText.From(ResourcesGenerationKind.Source, Encoding.UTF8));
-        ctx.AddSource($"{nameof(DictionaryLocalizedResource)}.g.cs", SourceText.From(DictionaryLocalizedResource.Source, Encoding.UTF8));
-        ctx.AddSource($"{nameof(FunctionalLocalizedResource)}.g.cs", SourceText.From(FunctionalLocalizedResource.Source, Encoding.UTF8));
-        ctx.AddSource($"{nameof(ResourcesNextConfigurationAttribute)}.g.cs", SourceText.From(ResourcesNextConfigurationAttribute.Source, Encoding.UTF8));
-    });
-
-    public void Execute(GeneratorExecutionContext context)
-    {
-        var attribute = context.Compilation.Assembly
-            .GetAttributes()
-            .FirstOrDefault(x => x.AttributeClass!.Name == nameof(ResourcesNextConfigurationAttribute));
-
-        var kind = attribute?.NamedArguments
-            .FirstOrDefault(x => x.Key == ResourcesNextConfigurationAttribute.KindProperty)
-            .Value.Value is int enumValue
-            ? (ResourcesGenerationKind.Enum)enumValue
-            : ResourcesGenerationKind.Enum.Auto;
-        
-        foreach (var file in context.AdditionalFiles)
+        context.RegisterPostInitializationOutput(ctx =>
         {
-            if (context.CancellationToken.IsCancellationRequested)
+            ctx.AddSource($"{nameof(DictionaryLocalizedResource)}.g.cs", SourceText.From(DictionaryLocalizedResource.Source, Encoding.UTF8));
+            ctx.AddSource($"{nameof(FunctionalLocalizedResource)}.g.cs", SourceText.From(FunctionalLocalizedResource.Source, Encoding.UTF8));
+        });
+        
+        var configurations = GetAttributeProvider(context.SyntaxProvider);
+        
+        var resourceFiles = context.AdditionalTextsProvider
+            .Where(IsResourceFile)
+            .Collect();
+        
+        context.RegisterSourceOutput(configurations.Combine(resourceFiles),
+            (ctx, t) =>
             {
-                return;
-            }
+                var (attributes, texts) = t;
 
-            var fileName = Path.GetFileName(file.Path);
-            var isResourceFile = Path.GetExtension(fileName) is ".csv" && fileName.Contains("Resources");
-            if (isResourceFile is false)
-            {
-                continue;
-            }
+                var resContext = ResourcesGenerationContext.Create(attributes, ctx.CancellationToken);
 
-            var resourceClass = GenerateResourceClass(file, kind, context.CancellationToken);
+                foreach (var text in texts)
+                {
+                    var resourceName = Path.GetFileNameWithoutExtension(text.Path);
+                    var currentContext = resContext.GetConfiguration(resourceName);
 
-            context.AddSource(resourceClass.FileName, resourceClass.Source);
-        }
+                    var resource = GenerateResourceClass(text, currentContext, ctx.CancellationToken);
+                    
+                    ctx.AddSource(resource.FileName, resource.Source);
+                }
+            });
     }
 
-    internal static ResourcesSourceFile GenerateResourceClass(AdditionalText file, ResourcesGenerationKind.Enum kind, CancellationToken ct)
+    private static IncrementalValueProvider<ImmutableArray<AttributeData>> GetAttributeProvider(
+        SyntaxValueProvider syntaxProvider)
     {
-        if (kind is ResourcesGenerationKind.Enum.Auto)
-        {
-            #if DEBUG
-            kind = ResourcesGenerationKind.Enum.Dictionary;
-            #else
-            kind = ResourcesGenerationKind.Enum.Functional;
-            #endif
-        }
+        var globalAttributeName = typeof(ResourcesNextConfigurationAttribute.GlobalAttribute).FullName!;
+        var globalProvider = syntaxProvider.ForAttributeWithMetadataName(globalAttributeName,
+                predicate: static (node, _) => node is CompilationUnitSyntax,
+                transform: (ctx, _) => ctx.Attributes)
+            .SelectMany((x, _) => x)
+            .Collect();
+        
+        var overrideAttributeName = typeof(ResourcesNextConfigurationAttribute.OverrideAttribute).FullName!;
+        var overrideProvider = syntaxProvider.ForAttributeWithMetadataName(overrideAttributeName,
+                predicate: static (node, _) => node is CompilationUnitSyntax,
+                transform: (ctx, _) => ctx.Attributes)
+            .SelectMany((x, _) => x)
+            .Collect();
+        
+        return globalProvider.Combine(overrideProvider)
+            .SelectMany((x, _) => x.Left.AddRange(x.Right))
+            .Collect();
+    }
+
+    private static bool IsResourceFile(AdditionalText file) =>
+        Path.GetExtension(file.Path) is ".csv" && 
+        Path.GetFileNameWithoutExtension(file.Path).Contains("Resources");
+
+    private static ResourcesSourceFile GenerateResourceClass(AdditionalText file, ResourceConfigurationInternal configuration, CancellationToken ct)
+    {
+        var effectiveConfiguration = configuration.WithEffectiveGenerationKind();
         
         var fileName = Path.GetFileName(file.Path);
 
-        var lines = file.GetText(ct)?.Lines;
-        if (lines is null)
-        {
-            throw new IOException($"There was an error reading file {fileName}");
-        }
-
         var className = Path.GetFileNameWithoutExtension(fileName);
-        var resources = GetResources(lines, ct);
+        string source;
+        try
+        {
+            var lines = file.GetText(ct)?.Lines;
+            if (lines is null)
+            {
+                throw new IOException($"There was an error reading file {fileName}");
+            }
+            
+            var resources = GetResources(lines, effectiveConfiguration, ct);
 
-        var source = GenerateClass(className, resources, file.Path, kind);
+            source = ResourceClass.Generate(className, file.Path, configuration, resources, effectiveConfiguration.Kind!.Value);
+        }
+        catch (Exception e)
+        {
+            source = ResourceClass.GenerateError(className, file.Path, configuration, e);
+        }
+        
         return new ResourcesSourceFile($"{className}.g.cs", SourceText.From(source, Encoding.UTF8));
     }
 
-    internal static string GenerateClass(
-        string className,
-        IReadOnlyCollection<Resource> resources,
-        string filePath,
-        ResourcesGenerationKind.Enum kind) => 
-        $@"// <auto-generated/>
-#nullable enable
-
-using Resources.Next;
-using System.Collections.Generic;
-using System.Collections.Frozen;
-using System.Globalization;
-using System.Threading;
-using System;
-
-namespace Resources.Next.Generated;
-
-/// <summary>
-/// An <see cref=""IResourceProvider""/> created from file:
-/// <code>{filePath}</code>
-/// </summary>
-public class {className} : IResourceProvider
-{{
-    private {className}() {{}}
-{GenerateDictionary(resources)}
-{string.Join("\n", resources.Select(x => GenerateResource(x, kind)))}
-}}";
-
-    internal static string GenerateDictionary(IEnumerable<Resource> resources) => @$"
-    public static LocalizedResource? Find(string key) => key switch
-    {{
-{string.Concat(resources.Select(x => $"\t\t\"{x.Name}\" => {x.Name},\n"))}
-        _ => null
-    }};
-";
-
-    // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-    internal static string GenerateResource(Resource resource, ResourcesGenerationKind.Enum kind) => kind switch
+    private static IReadOnlyCollection<Resource> GetResources(
+        TextLineCollection fileContent,
+        ResourceConfigurationInternal config,
+        CancellationToken ct)
     {
-        ResourcesGenerationKind.Enum.Dictionary => GenerateDictionaryResource(resource),
-        ResourcesGenerationKind.Enum.Functional => GenerateFunctionalResource(resource),
-        _ => throw new InvalidOperationException()
-    };
-
-    internal static string GenerateDictionaryResource(Resource resource) => $@"
-    /// <summary>
-    /// A resource with following default value:
-    /// <code>{resource.DefaultLocale}</code>
-    /// </summary>
-    public static LocalizedResource {resource.Name} {{ get; }} = new DictionaryLocalizedResource
-    ([
-        KeyValuePair.Create(string.Empty, ""{resource.DefaultLocale}""),
-{string.Join("\n", resource.OtherLocales.Select(x => $"\t\tKeyValuePair.Create(\"{x.Key}\", \"{x.Value}\"),"))}
-    ]);";
-    
-    private static string GenerateFunctionalResource(Resource resource) => $@"
-    /// <summary>
-    /// A resource with following default value:
-    /// <code>{resource.DefaultLocale}</code>
-    /// </summary>
-    public static LocalizedResource {resource.Name} {{ get; }} = new FunctionalLocalizedResource(static culture => culture switch 
-    {{
-{string.Join("\n", resource.OtherLocales.Select(x => $"\t\t\"{x.Key}\" => \"{x.Value}\","))}
-        _ => ""{resource.DefaultLocale}""
-    }});";
-
-    internal static IReadOnlyCollection<Resource> GetResources(TextLineCollection fileContent, CancellationToken ct)
-    {
-        const char separator = ';';
-        const string nameIdentifier = "Name";
-        const string commentPrefix = "#";
-
         List<Resource> resources = [];
 
         var lines = fileContent
             .Select(x => x.ToString())
             .Where(x =>
-                x.StartsWith(commentPrefix) is false &&
+                x.StartsWith(config.CommentPrefix!) is false &&
                 string.IsNullOrWhiteSpace(x) is false)
-            .Select(x => x.Split(separator)
-                    .Select(y => y.Replace(@"\n", "\n"))
-                    .ToArray());
+            .Select(x => x.Split(config.Separator!.Value)
+                .Select(y => y.Replace(@"\n", "\n"))
+                .ToArray());
 
         var header = lines.Take(1).First();
 
-        var nameIndex = Array.IndexOf(header, nameIdentifier);
+        var nameIndex = Array.IndexOf(header, config.NameColumn);
 
         var cultureIndices = header
             .Select((culture, index) => (culture, index))
-            .Where(x => x.culture is not nameIdentifier)
+            .Where(x => x.culture != config.NameColumn)
             .ToDictionary(x => x.index, x => x.culture);
 
         // ReSharper disable once LoopCanBeConvertedToQuery
@@ -192,5 +148,4 @@ public class {className} : IResourceProvider
 
         return resources;
     }
-
 }

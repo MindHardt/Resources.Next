@@ -17,7 +17,7 @@ internal static class FunctionalLocalizedResource
         /// <remarks>
         /// This implementation is expected to be more optimal but harder to debug.
         /// </remarks>
-        public class FunctionalLocalizedResource(Func<string, string?> localizationProvider) : LocalizedResource
+        internal class FunctionalLocalizedResource(Func<string, string?> localizationProvider) : LocalizedResource
         {
             public override string Default => 
                 localizationProvider(string.Empty) 
