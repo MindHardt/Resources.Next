@@ -1,6 +1,4 @@
-﻿// ReSharper disable InconsistentNaming
-
-namespace Resources.Next.Shared;
+﻿namespace Resources.Next.Core;
 
 /// <summary>
 /// An attribute family to configure Resources.Next source generator.

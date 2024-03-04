@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Resources.Next.Shared;
+using Resources.Next.Core;
 
 namespace Resources.Next.Generator;
 

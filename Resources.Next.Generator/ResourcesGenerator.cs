@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Resources.Next.Generator.Generators;
 using Resources.Next.Generator.Source;
-using Resources.Next.Shared;
+using Resources.Next.Core;
 
 // ReSharper disable PossibleMultipleEnumeration
 // ReSharper disable UseRawString
@@ -41,15 +41,21 @@ public class ResourcesGenerator : IIncrementalGenerator
 
                 var resContext = ResourcesGenerationContext.Create(attributes, ctx.CancellationToken);
 
+                var resourceClassNames = new List<string>(texts.Length);
                 foreach (var text in texts)
                 {
                     var resourceName = Path.GetFileNameWithoutExtension(text.Path);
+                    resourceClassNames.Add(resourceName);
+                    
                     var currentContext = resContext.GetConfiguration(resourceName);
 
                     var resource = GenerateResourceClass(text, currentContext, ctx.CancellationToken);
                     
                     ctx.AddSource(resource.FileName, resource.Source);
                 }
+
+                var finderClass = ResourceFinder.Generate(resourceClassNames);
+                ctx.AddSource($"{nameof(ResourceFinder)}.g.cs", SourceText.From(finderClass, Encoding.UTF8));
             });
     }
 
@@ -107,12 +113,12 @@ public class ResourcesGenerator : IIncrementalGenerator
         return new ResourcesSourceFile($"{className}.g.cs", SourceText.From(source, Encoding.UTF8));
     }
 
-    private static IReadOnlyCollection<Resource> GetResources(
+    private static IReadOnlyCollection<GeneratedResource> GetResources(
         TextLineCollection fileContent,
         ResourceConfigurationInternal config,
         CancellationToken ct)
     {
-        List<Resource> resources = [];
+        List<GeneratedResource> resources = [];
 
         var lines = fileContent
             .Select(x => x.ToString())
@@ -142,7 +148,7 @@ public class ResourcesGenerator : IIncrementalGenerator
                 .Where(x => cultureIndices.ContainsKey(x.index))
                 .ToDictionary(x => cultureIndices[x.index], x => x.resource);
 
-            var localizedResource = new Resource(resourceRow[nameIndex], locales);
+            var localizedResource = new GeneratedResource(resourceRow[nameIndex], locales);
             resources.Add(localizedResource);
         }
 

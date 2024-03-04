@@ -1,16 +1,14 @@
-﻿using System;
-using System.ComponentModel;
-
-namespace Resources.Next.Core;
+﻿namespace Resources.Next.Core;
 
 /// <summary>
-/// An interface for resource providers. The implementors are expected to be source-generated.
+/// An interface for resources generated with Resources.Next.
 /// </summary>
 public interface IResourceProvider
 {
     /// <summary>
-    /// Looks for a resource with key equal to <paramref name="key"/>
-    /// in this <see cref="IResourceProvider"/>.
+    /// Finds resource with specified name.
     /// </summary>
-    public static abstract LocalizedResource? Find(string key);
+    /// <param name="key"></param>
+    /// <returns>Found resource of <see langword="null"/> if none is found.</returns>
+    public LocalizedResource? FindResource(string key);
 }

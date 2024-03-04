@@ -9,6 +9,7 @@ internal static class DictionaryLocalizedResource
         using System;
         using System.Collections.Frozen;
         using System.Collections.Generic;
+        using Resources.Next.Core;
         
         {{SourceConstants.NamespaceDirective}}
         

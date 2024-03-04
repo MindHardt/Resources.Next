@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.CodeAnalysis;
-using Resources.Next.Shared;
+using Resources.Next.Core;
 
 namespace Resources.Next.Generator;
 
@@ -12,7 +12,7 @@ public static class Helper
             : null;
     
     public static ResourcesGenerationKind? GetKind(this AttributeData attribute) => 
-        attribute.GetValue(nameof(ResourcesNextConfigurationAttribute.Kind)) is int kindValue
+        attribute.GetValue(nameof(ResourcesNextConfigurationAttribute.Kind)) is byte kindValue
             ? (ResourcesGenerationKind)kindValue
             : null;
 

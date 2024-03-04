@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Resources.Next.Generator;
 
-internal record Resource(string Name, Dictionary<string, string> Locales)
+internal record GeneratedResource(string Name, Dictionary<string, string> Locales)
 {
     public string Name { get; } = Name;
     public Dictionary<string, string> Locales { get; } = Locales;

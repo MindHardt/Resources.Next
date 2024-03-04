@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Resources.Next.Shared;
+using Resources.Next.Core;
 
 // ReSharper disable UseRawString
 
@@ -13,7 +13,7 @@ internal static class ResourceClass
         string className,
         string filePath,
         ResourceConfigurationInternal configuration,
-        IReadOnlyCollection<Resource> resources,
+        IReadOnlyCollection<GeneratedResource> resources,
         ResourcesGenerationKind kind) =>
         Generate(
             className, 
@@ -29,24 +29,23 @@ internal static class ResourceClass
         ResourceConfigurationInternal configuration,
         Exception ex)
     {
-        var errorMessage = $"There was en error when generating this resource: {ex.Message}";
+        var errorMessage = $"There was en error when generating this resource: {ex.Message}, Stack trace: {ex.StackTrace}";
 
         return Generate(
             className,
             filePath,
             configuration,
-            $"\n\t\tthrow new InvalidOperationException(\"{errorMessage}\");",
+            $"\n\t\tthrow new InvalidOperationException(@\"{errorMessage}\");",
             null,
-            $"\n[Obsolete(\"{errorMessage}\")]");
+            $"\n[Obsolete(@\"{errorMessage}\")]");
     }
     
-    private static string GenerateFindMethod(IEnumerable<Resource> resources) => 
-        @$"key switch
+    private static string GenerateFindMethod(IEnumerable<GeneratedResource> resources) => 
+        @$"name switch
     {{
 {string.Concat(resources.Select(x => $"\t\t\"{x.Name}\" => {x.Name},\n"))}
         _ => null
-    }};
-";
+    }};";
 
     private static string Generate(
         string className,
@@ -82,15 +81,17 @@ namespace Resources.Next.Generated;
 public class {className} : IResourceProvider
 {{
     private {className}() {{}}
-    public static LocalizedResource? Find(string key) => {findMethod}
+    public static {className} Instance {{ get; }} = new();
+
+    public LocalizedResource? FindResource(string name) => {findMethod}
 {resourceProperties}
 }}";
     
     // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-    private static string GenerateResource(Resource resource, ResourcesGenerationKind kind) => kind switch
+    private static string GenerateResource(GeneratedResource generatedResource, ResourcesGenerationKind kind) => kind switch
     {
-        ResourcesGenerationKind.Dictionary => DictionaryResource.Generate(resource),
-        ResourcesGenerationKind.Functional => FunctionalResource.Generate(resource),
+        ResourcesGenerationKind.Dictionary => DictionaryResource.Generate(generatedResource),
+        ResourcesGenerationKind.Functional => FunctionalResource.Generate(generatedResource),
         _ => throw new InvalidOperationException()
     };
 }

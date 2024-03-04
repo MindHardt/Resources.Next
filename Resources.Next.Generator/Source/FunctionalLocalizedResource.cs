@@ -7,6 +7,7 @@ internal static class FunctionalLocalizedResource
         {{SourceConstants.FileHeader}}
         
         using System;
+        using Resources.Next.Core;
         
         {{SourceConstants.NamespaceDirective}}
         

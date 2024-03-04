@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InvalidXmlDocComment
-namespace Resources.Next.Shared;
+namespace Resources.Next.Core;
 
 public enum ResourcesGenerationKind : byte
 {

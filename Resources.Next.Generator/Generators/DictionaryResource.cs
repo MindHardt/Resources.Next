@@ -5,14 +5,14 @@ namespace Resources.Next.Generator.Generators;
 
 internal static class DictionaryResource
 {
-    internal static string Generate(Resource resource) => $@"
+    internal static string Generate(GeneratedResource generatedResource) => $@"
     /// <summary>
     /// A resource with following default value:
-    /// <code>{resource.DefaultLocale}</code>
+    /// <code>{generatedResource.DefaultLocale}</code>
     /// </summary>
-    public static LocalizedResource {resource.Name} {{ get; }} = new DictionaryLocalizedResource
+    public static LocalizedResource {generatedResource.Name} {{ get; }} = new DictionaryLocalizedResource
     ([
-        KeyValuePair.Create(string.Empty, ""{resource.DefaultLocale}""),
-{string.Join("\n", resource.OtherLocales.Select(x => $"\t\tKeyValuePair.Create(\"{x.Key}\", \"{x.Value}\"),"))}
+        KeyValuePair.Create(string.Empty, ""{generatedResource.DefaultLocale}""),
+{string.Join("\n", generatedResource.OtherLocales.Select(x => $"\t\tKeyValuePair.Create(\"{x.Key}\", \"{x.Value}\"),"))}
     ]);";
 }

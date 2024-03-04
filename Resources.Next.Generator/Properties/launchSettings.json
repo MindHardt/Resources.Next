@@ -3,7 +3,7 @@
   "profiles": {
     "DebugRoslynSourceGenerator": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "../Resources.Next.Core/Resources.Next.Core.csproj"
+      "targetProject": "../Resources.Next.Sample/Resources.Next.Sample.csproj"
     }
   }
 }
