@@ -12,14 +12,8 @@
         <IsRoslynComponent>true</IsRoslynComponent>
     </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference PrivateAssets="all" Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4"/>
-        <PackageReference PrivateAssets="all" Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0"/>
-        <PackageReference PrivateAssets="all" Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.0"/>
-    </ItemGroup>
-
     <PropertyGroup>
-        <Version>2.3.0</Version>
+        <Version>2.3.1</Version>
         <PackageId>MindHardt.Resources.Next</PackageId>
         <Title>MindHardt.Resources.Next</Title>
         <Authors>MindHardt</Authors>
@@ -29,6 +23,12 @@
         <RepositoryUrl>https://github.com/MindHardt/Resources.Next</RepositoryUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference PrivateAssets="all" Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4"/>
+        <PackageReference PrivateAssets="all" Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0"/>
+        <PackageReference PrivateAssets="all" Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.0"/>
+    </ItemGroup>
 
     <ItemGroup>
         <None Include="..\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
@@ -44,5 +44,14 @@
             <None Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Pack)' == 'true'" PackagePath="lib/$(TargetFramework)/%(Filename)%(Extension)" />
         </ItemGroup>
     </Target>
+
+    <PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
     
 </Project>
