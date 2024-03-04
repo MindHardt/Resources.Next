@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>2.2.1</Version>
+        <Version>2.2.2</Version>
         <PackageId>MindHardt.Resources.Next</PackageId>
         <Title>MindHardt.Resources.Next</Title>
         <Authors>MindHardt</Authors>

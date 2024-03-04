@@ -6,7 +6,6 @@
         <LangVersion>latest</LangVersion>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
-        <PackageId>Resources.Next.Generator</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Resources.Next.Core\Resources.Next.Core.csproj" />
+        <ProjectReference Include="..\Resources.Next.Core\Resources.Next.Core.csproj" PrivateAssets="all" />
     </ItemGroup>
 
     <PropertyGroup>
