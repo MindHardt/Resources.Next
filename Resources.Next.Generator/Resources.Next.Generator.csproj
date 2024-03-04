@@ -13,7 +13,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>2.3.3</Version>
+        <Version>2.3.4</Version>
         <PackageId>MindHardt.Resources.Next</PackageId>
         <Title>MindHardt.Resources.Next</Title>
         <Authors>MindHardt</Authors>
@@ -36,7 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Resources.Next.Core\Resources.Next.Core.csproj" />
+        <ProjectReference Include="..\Resources.Next.Core\Resources.Next.Core.csproj" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
@@ -46,6 +46,7 @@
 
     <PropertyGroup>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
     
 </Project>
