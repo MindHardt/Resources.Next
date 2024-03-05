@@ -10,6 +10,8 @@
     <PropertyGroup>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -44,9 +46,10 @@
         <None Include="$(OutputPath)\Resources.Next.Core.dll" Pack="true" PackagePath="lib/$(TargetFramework)" Visible="false" />
     </ItemGroup>
 
-    <PropertyGroup>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
-    </PropertyGroup>
+    <Target Name="_PackBuildOutput" AfterTargets="ResolveAssemblyReferences">
+        <ItemGroup>
+            <None Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Pack)' == 'true'" PackagePath="lib/$(TargetFramework)/%(Filename)%(Extension)" />
+        </ItemGroup>
+    </Target>
     
 </Project>
