@@ -36,7 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Resources.Next.Core\Resources.Next.Core.csproj" PrivateAssets="all" />
+        <ProjectReference Include="..\Resources.Next.Core\Resources.Next.Core.csproj" PrivateAssets="all" Pack="true" PackagePath="analyzers/dotnet/cs" />
     </ItemGroup>
 
     <ItemGroup>
