@@ -7,6 +7,26 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <Version>1.0.0</Version>
+        <PackageId>MindHardt.Resources.Next.Core</PackageId>
+        <Title>MindHardt.Resources.Next.Core</Title>
+        <Authors>MindHardt</Authors>
+        <Description>
+            An alternative to .resx resources, allowing for more flexible and readable localized resources.
+            This package contains basic primitives for Resources.Next.Generator.
+        </Description>
+        <PackageProjectUrl>https://github.com/MindHardt/Resources.Next</PackageProjectUrl>
+        <PackageIcon>icon.png</PackageIcon>
+        <RepositoryUrl>https://github.com/MindHardt/Resources.Next</RepositoryUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\icon.png" Pack="true" PackagePath="\" Link="icon.png" />
+        <None Include="..\README.md" Pack="true" PackagePath="\" Link="README.md" />
+    </ItemGroup>
+
     <ItemGroup>
       <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
     </ItemGroup>

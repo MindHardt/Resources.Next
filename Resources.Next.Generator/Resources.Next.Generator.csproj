@@ -15,7 +15,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <Version>2.3.5</Version>
+        <Version>2.3.6</Version>
         <PackageId>MindHardt.Resources.Next</PackageId>
         <Title>MindHardt.Resources.Next</Title>
         <Authors>MindHardt</Authors>
@@ -38,17 +38,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Resources.Next.Core\Resources.Next.Core.csproj" PrivateAssets="all" Pack="true" PackagePath="analyzers/dotnet/cs" />
+        <ProjectReference Include="..\Resources.Next.Core\Resources.Next.Core.csproj" Pack="true" PrivateAssets="all" PackagePath="analyzers/dotnet/cs" />
     </ItemGroup>
 
     <ItemGroup>
         <None Include="$(OutputPath)\Resources.Next.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-        <None Include="$(OutputPath)\Resources.Next.Core.dll" Pack="true" PackagePath="lib/$(TargetFramework)" Visible="false" />
     </ItemGroup>
 
     <Target Name="_PackBuildOutput" AfterTargets="ResolveAssemblyReferences">
         <ItemGroup>
-            <None Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Pack)' == 'true'" PackagePath="lib/$(TargetFramework)/%(Filename)%(Extension)" />
+            <None Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Pack)' == 'true'" PackagePath="dotnet/analyzers/cs/%(Filename)%(Extension)" />
         </ItemGroup>
     </Target>
     
